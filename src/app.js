@@ -1,9 +1,9 @@
 const express = require("express");
-const knex = require("./src/knex");
+const knex = require("./knex");
 
-const { initFoods } = require("./src/foods");
-const { initMenus } = require("./src/menus");
-const { initHistory } = require("./src/history");
+const { initFoods } = require("./foods");
+const { initMenus } = require("./menus");
+const { initHistory } = require("./history");
 
 function buildApp() {
   const app = express();
