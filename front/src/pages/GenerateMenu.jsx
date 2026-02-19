@@ -4,6 +4,8 @@ import { useApi } from "../hooks/useApi";
 export default function GenerateMenu() {
   const [targetCalories, setTargetCalories] = useState("");
   const [maxFat, setMaxFat] = useState("");
+  const [maxCarbon, setMaxCarbon] = useState("");
+  const [minProtein, setMinProtein] = useState("");
   const [result, setResult] = useState(null);
 
   const { post } = useApi();
@@ -13,7 +15,9 @@ export default function GenerateMenu() {
 
     const data = await post("/menus/generate", {
       targetCalories: Number(targetCalories),
-      maxFat: Number(maxFat),
+      maxFat: maxFat ? Number(maxFat) : null,
+      maxCarbon: maxCarbon ? Number(maxCarbon) : null,
+      minProtein: minProtein ? Number(minProtein) : null,
     });
 
     setResult(data);
@@ -58,21 +62,44 @@ export default function GenerateMenu() {
           />
         </div>
 
+        <div>
+          <label>炭水化物上限：</label>
+          <input
+            type="number"
+            value={maxCarbon}
+            onChange={(e) => setMaxCarbon(e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label>タンパク質下限：</label>
+          <input
+            type="number"
+            value={minProtein}
+            onChange={(e) => setMinProtein(e.target.value)}
+          />
+        </div>
+
         <button type="submit">生成する</button>
       </form>
 
       {result && (
-        <div style={{ marginTop: "20px" }}>
-          <h2>生成結果</h2>
-          <p>メニューID: {result.menuId.id || result.menuId}</p>
-
-          <h3>選ばれた食品</h3>
+        <div>
+          <h2>選ばれた食品</h2>
           <ul>
             {result.foods.map((f) => (
               <li key={f.id}>
-                {f.name}（{f.calories} kcal / fat {f.fat}g）
+                {f.name}（{f.calories} kcal / fat {f.fat}g / protein {f.protein}
+                g / carbon {f.carbon}g）
               </li>
             ))}
+          </ul>
+          <h3>合計値</h3>
+          <ul>
+            <li>カロリー: {result.totals.calories} kcal</li>
+            <li>タンパク質: {result.totals.protein} g</li>
+            <li>脂質: {result.totals.fat} g</li>
+            <li>炭水化物: {result.totals.carbon} g</li>
           </ul>
           <button onClick={handleAccept}>Accept</button>
           <button onClick={handleRegenerate}>Regenerate</button>
