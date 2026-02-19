@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const knex = require("./knex");
 
 const { initFoods } = require("./foods");
@@ -7,6 +8,10 @@ const { initHistory } = require("./history");
 
 function buildApp() {
   const app = express();
+
+  // cors起動
+  // React(5173) → Express(3000) を許可するために必要
+  app.use(cors());
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
