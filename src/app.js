@@ -40,6 +40,7 @@ function buildApp() {
 
   // History
   app.get("/history", historyController.list);
+  app.post("/history", historyController.create);
 
   app.use((req, res) => res.status(404).json({ error: "Not Found" }));
 

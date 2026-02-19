@@ -5,6 +5,7 @@ function initHistory(knex) {
 
   return {
     list: controller.list,
+    create: controller.create,
   };
 }
 

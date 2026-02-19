@@ -19,6 +19,22 @@ export default function GenerateMenu() {
     setResult(data);
   };
 
+  const handleAccept = async () => {
+    if (!result) return;
+    await post("/history", {
+      menu_id: result.menuId.id || result.menuId,
+    });
+    alert("履歴に追加しました！");
+  };
+
+  const handleRegenerate = async () => {
+    const data = await post("/menus/generate", {
+      targetCalories: Number(targetCalories),
+      maxFat: Number(maxFat),
+    });
+    setResult(data);
+  };
+
   return (
     <div>
       <h1>メニュー自動生成</h1>
@@ -58,6 +74,8 @@ export default function GenerateMenu() {
               </li>
             ))}
           </ul>
+          <button onClick={handleAccept}>Accept</button>
+          <button onClick={handleRegenerate}>Regenerate</button>
         </div>
       )}
     </div>

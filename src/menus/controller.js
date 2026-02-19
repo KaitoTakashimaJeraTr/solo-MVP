@@ -62,9 +62,9 @@ function initMenusController(knex) {
           });
         }
 
-        await knex("history").insert({
-          menu_id: menuId.id || menuId,
-        });
+        // await knex("history").insert({
+        //   menu_id: menuId.id || menuId,
+        // });
 
         res.json({ menuId, foods });
       } catch (err) {
