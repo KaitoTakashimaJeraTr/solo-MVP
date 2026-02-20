@@ -31,16 +31,16 @@ function buildApp() {
   }
 
   // Foods
-  app.get("/foods", foodsController.list);
+  app.get("/api/foods", foodsController.list);
 
   // Menus
-  app.get("/menus", menusController.list);
-  app.get("/menus/:id", validateIdMiddleware, menusController.find);
-  app.post("/menus/generate", menusController.generate);
+  app.get("/api/menus", menusController.list);
+  app.get("/api/menus/:id", validateIdMiddleware, menusController.find);
+  app.post("/api/menus/generate", menusController.generate);
 
   // History
-  app.get("/history", historyController.list);
-  app.post("/history", historyController.create);
+  app.get("/api/history", historyController.list);
+  app.post("/api/history", historyController.create);
 
   app.use((req, res) => res.status(404).json({ error: "Not Found" }));
 
