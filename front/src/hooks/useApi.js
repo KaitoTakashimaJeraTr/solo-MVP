@@ -2,7 +2,7 @@ export function useApi() {
   const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
   const post = async (path, body) => {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(`$/api${path}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -13,7 +13,7 @@ export function useApi() {
   };
 
   const get = async (path) => {
-    const res = await fetch(`${API_BASE}${path}`);
+    const res = await fetch(`$/api${path}`);
     return res.json();
   };
 
