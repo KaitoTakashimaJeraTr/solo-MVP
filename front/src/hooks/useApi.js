@@ -1,6 +1,4 @@
 export function useApi() {
-  const API_BASE = import.meta.env.VITE_API_BASE_URL;
-
   const post = async (path, body) => {
     const res = await fetch(`$/api${path}`, {
       method: "POST",
