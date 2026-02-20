@@ -15,12 +15,26 @@ function initMenusController(knex) {
         const menu = await knex("menus").where({ id: req.params.id }).first();
         if (!menu) return res.status(404).json({ error: "Menu not found" });
 
-        const items = await knex("menu_items")
+        const foods = await knex("menu_items")
           .where({ menu_id: req.params.id })
           .join("foods", "menu_items.food_id", "foods.id")
-          .select("foods.*");
+          .select(
+            "foods.id",
+            "foods.name",
+            "foods.calories",
+            "foods.protein",
+            "foods.fat",
+            "foods.carbon",
+          );
 
-        res.json({ ...menu, items });
+        res.json({
+          id: menu.id,
+          foods,
+          total_calories: menu.total_calories,
+          total_protein: menu.total_protein,
+          total_fat: menu.total_fat,
+          total_carbon: menu.total_carbon,
+        });
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Failed to fetch menu" });
@@ -29,55 +43,72 @@ function initMenusController(knex) {
 
     generate: async (req, res) => {
       const targetCalories = Number(req.body.targetCalories);
-      const maxFat = req.body.maxFat ? Number(req.body.maxFat) : null;
-      const maxCarbon = req.body.maxCarbon ? Number(req.body.maxCarbon) : null;
-      const minProtein = req.body.minProtein
-        ? Number(req.body.minProtein)
-        : null;
+
+      const maxFat =
+        req.body.maxFat === "" || req.body.maxFat === null
+          ? null
+          : Number(req.body.maxFat);
+
+      const maxCarbon =
+        req.body.maxCarbon === "" || req.body.maxCarbon === null
+          ? null
+          : Number(req.body.maxCarbon);
+
+      const minProtein =
+        req.body.minProtein === "" || req.body.minProtein === null
+          ? null
+          : Number(req.body.minProtein);
 
       try {
         const foods = await knex("foods").select("*");
 
         let selected = [];
-        let totalCalories = Infinity;
-        let totalFat = Infinity;
-        let totalCarbon = Infinity;
-        let totalProtein = -Infinity;
+        let totalCalories = 0;
+        let totalProtein = 0;
+        let totalFat = 0;
+        let totalCarbon = 0;
 
-        //条件を満たすまでループ
         let safety = 0;
+        const MAX_LOOP = 5000;
+
         while (true) {
           safety++;
-          if (safety > 10) {
+          if (safety > MAX_LOOP) {
             return res.status(400).json({
-              error: "条件に合うメニューが見つかりませんでした",
+              error:
+                "条件に合うメニューが見つかりませんでした（上限回数に達しました）",
             });
           }
 
-          // ランダムに3つ選ぶ
-          selected = [];
-          for (let i = 0; i < 3; i++) {
-            const randomFood = foods[Math.floor(Math.random() * foods.length)];
-            selected.push(randomFood);
+          const randomFood = foods[Math.floor(Math.random() * foods.length)];
+          selected.push(randomFood);
+
+          // 合計値を更新
+          totalCalories += randomFood.calories;
+          totalProtein += randomFood.protein;
+          totalFat += randomFood.fat;
+          totalCarbon += randomFood.carbon;
+
+          // カロリーが上限を超えたら即やり直し
+          if (totalCalories > targetCalories) {
+            // リセットして再挑戦
+            selected = [];
+            totalCalories = 0;
+            totalProtein = 0;
+            totalFat = 0;
+            totalCarbon = 0;
+            continue;
           }
 
-          // 合計値計算
-          totalCalories = selected.reduce((sum, f) => sum + f.calories, 0);
-          totalProtein = selected.reduce((sum, f) => sum + f.protein, 0);
-          totalFat = selected.reduce((sum, f) => sum + f.fat, 0);
-          totalCarbon = selected.reduce((sum, f) => sum + f.carbon, 0);
-
-          // ★ 条件チェック
-          if (totalCalories > targetCalories) continue;
+          // 他の条件をチェック
           if (maxFat !== null && totalFat > maxFat) continue;
           if (maxCarbon !== null && totalCarbon > maxCarbon) continue;
           if (minProtein !== null && totalProtein < minProtein) continue;
 
-          // 条件を満たしたら break
+          // すべての条件を満たしたら終了
           break;
         }
 
-        // メニュー保存
         const [menuId] = await knex("menus")
           .insert({
             total_calories: totalCalories,
