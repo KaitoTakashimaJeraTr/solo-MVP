@@ -8,9 +8,9 @@
     "dev": "nodemon src/server.js",
     "build": "cd front && npm install && npm run build && rm -rf ../public && cp -r dist ../public",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "migrate-latest": "npx knex migrate:latest --knexfile knexfile.js",
-    "migrate-down": "npx knex migrate:down --knexfile knexfile.js",
-    "seed-data": "npx knex seed:run --knexfile knexfile.js"
+    "migrate-latest": "npx knex migrate:latest",
+    "migrate-down": "npx knex migrate:down",
+    "seed-data": "npx knex seed:run"
   },
   "keywords": [],
   "author": "",
