@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const knex = require("./knex");
+const path = require("path");
 
 const { initFoods } = require("./foods");
 const { initMenus } = require("./menus");
@@ -41,6 +42,12 @@ function buildApp() {
   // History
   app.get("/api/history", historyController.list);
   app.post("/api/history", historyController.create);
+
+  app.use(express.static(path.join(__dirname, "../front/dist")));
+
+  app.get(/.*/, (req, res) => {
+    res.sendFile(path.join(__dirname, "../front/dist/index.html"));
+  });
 
   app.use((req, res) => res.status(404).json({ error: "Not Found" }));
 
