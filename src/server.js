@@ -4,11 +4,9 @@ const { buildApp } = require("./app");
 const PORT = process.env.PORT || 3000;
 const app = buildApp();
 
-// React のビルドファイルを配信
-app.use(require("express").static(path.join(__dirname, "../front/dist")));
+app.use(express.static(path.join(__dirname, "../front/dist")));
 
-// すべてのルートで React の index.html を返す
-app.get("*", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../front/dist/index.html"));
 });
 
