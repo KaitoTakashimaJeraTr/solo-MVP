@@ -6,6 +6,8 @@ const path = require("path");
 const { initFoods } = require("./foods");
 const { initMenus } = require("./menus");
 const { initHistory } = require("./history");
+const { initAuth } = require("./auth");
+const { authMiddleware } = require("./middleware/auth");
 
 function buildApp() {
   const app = express();
@@ -20,6 +22,7 @@ function buildApp() {
   const foodsController = initFoods(knex);
   const menusController = initMenus(knex);
   const historyController = initHistory(knex);
+  const authController = initAuth(knex);
 
   function validateIdMiddleware(req, res, next) {
     const id = Number(req.params.id);
@@ -42,6 +45,11 @@ function buildApp() {
   // History
   app.get("/api/history", historyController.list);
   app.post("/api/history", historyController.create);
+
+  // Auth
+  app.post("/api/auth/register", authController.register);
+  app.post("/api/auth/login", authController.login);
+  app.get("/api/auth/me", authMiddleware, authController.me);
 
   app.use(express.static(path.join(__dirname, "../front/dist")));
 
