@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Box, Input, Button, Heading, VStack } from "@chakra-ui/react";
 
-export default function LoginPage() {
+export default function LoginPage({ setIsLoggedIn, setPage }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -19,11 +19,11 @@ export default function LoginPage() {
 
     if (data.token) {
       localStorage.setItem("token", data.token);
+
       setIsLoggedIn(true);
       setPage("generate");
+
       alert("ログイン成功！");
-      // 必要ならトップページへ遷移
-      // navigate("/");
     } else {
       alert("ログイン失敗");
     }
