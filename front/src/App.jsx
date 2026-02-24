@@ -82,8 +82,12 @@ function App() {
       )}
 
       {/* ログイン後のページ */}
-      {isLoggedIn && page === "generate" && <GenerateMenu user={user} />}
-      {isLoggedIn && page === "history" && <HistoryCalendar user={user} />}
+      {isLoggedIn && page === "generate" && (
+        <GenerateMenu key={user?.id} user={user} />
+      )}
+      {isLoggedIn && page === "history" && (
+        <HistoryCalendar key={user?.id} user={user} />
+      )}
     </div>
   );
 }
