@@ -61,6 +61,7 @@ export default function HistoryCalendar() {
     setSelectedMenuDetail(null);
 
     const data = await get(`/menus/${menuId}`);
+    console.log("menu detail:", data);
     setSelectedMenuDetail(data);
 
     setIsDetailLoading(false);

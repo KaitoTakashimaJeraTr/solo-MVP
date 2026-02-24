@@ -1,7 +1,7 @@
-const path = require("path");
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config({ path: path.join(__dirname, ".env") });
-}
+// const path = require("path");
+// if (process.env.NODE_ENV !== "production") {
+//   require("dotenv").config({ path: path.join(__dirname, ".env") });
+// }
 console.log("---------------------", process.env.POSTGRES_PASSWORD);
 
 module.exports = {
